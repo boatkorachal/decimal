@@ -1,15 +1,3 @@
-defmodule Decimal.Macros do
-  @moduledoc false
-
-  defmacro doc_since(version) do
-    if Version.match?(System.version(), ">= 1.7.0") do
-      quote do
-        @doc since: unquote(version)
-      end
-    end
-  end
-end
-
 defmodule Decimal do
   @moduledoc """
   Decimal arithmetic on arbitrary precision floating-point numbers.
@@ -62,7 +50,6 @@ defmodule Decimal do
 
   import Bitwise
   import Kernel, except: [abs: 1, div: 2, max: 2, min: 2, rem: 2, round: 1]
-  import Decimal.Macros
 
   @power_of_2_to_52 4_503_599_627_370_496
 
@@ -239,7 +226,7 @@ defmodule Decimal do
     @doc """
     Runs function with given context.
     """
-    doc_since("1.9.0")
+    @doc since: "1.9.0"
     @spec with(t(), (() -> x)) :: x when x: var
     def with(%Context{} = context, fun) when is_function(fun, 0) do
       old = Process.put(@context_key, context)
@@ -254,7 +241,7 @@ defmodule Decimal do
     @doc """
     Gets the process' context.
     """
-    doc_since("1.9.0")
+    @doc since: "1.9.0"
     @spec get() :: t()
     def get() do
       Process.get(@context_key, %Context{})
@@ -263,7 +250,7 @@ defmodule Decimal do
     @doc """
     Set the process' context.
     """
-    doc_since("1.9.0")
+    @doc since: "1.9.0"
     @spec set(t()) :: :ok
     def set(%Context{} = context) do
       Process.put(@context_key, context)
@@ -273,7 +260,7 @@ defmodule Decimal do
     @doc """
     Update the process' context.
     """
-    doc_since("1.9.0")
+    @doc since: "1.9.0"
     @spec update((t() -> t())) :: :ok
     def update(fun) when is_function(fun, 1) do
       get() |> fun.() |> set()
@@ -509,7 +496,7 @@ defmodule Decimal do
       false
 
   """
-  doc_since("1.8.0")
+  @doc since: "1.8.0"
   @spec eq?(decimal, decimal) :: boolean
   def eq?(%Decimal{coef: :qNaN}, _num2), do: false
   def eq?(_num1, %Decimal{coef: :qNaN}), do: false
@@ -529,7 +516,7 @@ defmodule Decimal do
       false
 
   """
-  doc_since("1.8.0")
+  @doc since: "1.8.0"
   @spec gt?(decimal, decimal) :: boolean
   def gt?(%Decimal{coef: :qNaN}, _num2), do: false
   def gt?(_num1, %Decimal{coef: :qNaN}), do: false
@@ -549,7 +536,7 @@ defmodule Decimal do
       false
 
   """
-  doc_since("1.8.0")
+  @doc since: "1.8.0"
   @spec lt?(decimal, decimal) :: boolean
   def lt?(%Decimal{coef: :qNaN}, _num2), do: false
   def lt?(_num1, %Decimal{coef: :qNaN}), do: false
@@ -983,7 +970,7 @@ defmodule Decimal do
       #Decimal<Infinity>
 
   """
-  doc_since("1.9.0")
+  @doc since: "1.9.0"
   @spec negate(decimal) :: t
   def negate(%Decimal{coef: :sNaN} = num), do: error(:invalid_operation, "operation on NaN", num)
   def negate(%Decimal{coef: :qNaN} = num), do: num
@@ -993,7 +980,7 @@ defmodule Decimal do
   @doc """
   Applies the context to the given number rounding it to specified precision.
   """
-  doc_since("1.9.0")
+  @doc since: "1.9.0"
   @spec apply_context(t) :: t
   def apply_context(%Decimal{coef: :sNaN} = num),
     do: error(:invalid_operation, "operation on NaN", num)
@@ -1003,7 +990,7 @@ defmodule Decimal do
   @doc """
   Check if given number is positive
   """
-  doc_since("1.5.0")
+  @doc since: "1.5.0"
   @spec positive?(t) :: boolean
   def positive?(%Decimal{coef: :sNaN} = num),
     do: error(:invalid_operation, "operation on NaN", num)
@@ -1016,7 +1003,7 @@ defmodule Decimal do
   @doc """
   Check if given number is negative
   """
-  doc_since("1.5.0")
+  @doc since: "1.5.0"
   @spec negative?(t) :: boolean
   def negative?(%Decimal{coef: :sNaN} = num),
     do: error(:invalid_operation, "operation on NaN", num)
@@ -1096,7 +1083,7 @@ defmodule Decimal do
       #Decimal<1.01>
 
   """
-  doc_since("1.9.0")
+  @doc since: "1.9.0"
   @spec normalize(t) :: t
   def normalize(%Decimal{coef: :sNaN} = num),
     do: error(:invalid_operation, "operation on NaN", num)
@@ -1163,7 +1150,7 @@ defmodule Decimal do
       #Decimal<10>
 
   """
-  doc_since("1.7.0")
+  @doc since: "1.7.0"
   @spec sqrt(decimal) :: t
   def sqrt(%Decimal{coef: :sNaN} = num),
     do: error(:invalid_operation, "operation on NaN", num)
@@ -1307,8 +1294,7 @@ defmodule Decimal do
   """
   @spec new(1 | -1, non_neg_integer | :qNaN | :sNaN | :inf, integer) :: t
   def new(sign, coef, exp)
-      when sign in [1, -1] and
-             ((is_integer(coef) and coef >= 0) or coef in [:qNaN, :sNan, :inf]) and
+      when sign in [1, -1] and ((is_integer(coef) and coef >= 0) or coef in [:qNaN, :sNan, :inf]) and
              is_integer(exp),
       do: %Decimal{sign: sign, coef: coef, exp: exp}
 
@@ -1420,7 +1406,7 @@ defmodule Decimal do
   end
 
   def to_string(%Decimal{sign: sign, coef: coef, exp: exp}, :normal) do
-    list = integer_to_charlist(coef)
+    list = Integer.to_charlist(coef)
 
     list =
       if exp >= 0 do
@@ -1440,7 +1426,7 @@ defmodule Decimal do
   end
 
   def to_string(%Decimal{sign: sign, coef: coef, exp: exp}, :scientific) do
-    list = integer_to_charlist(coef)
+    list = Integer.to_charlist(coef)
     length = length(list)
     adjusted = exp + length - 1
 
@@ -1464,7 +1450,7 @@ defmodule Decimal do
           list = if length > 1, do: List.insert_at(list, 1, ?.), else: list
           list = list ++ 'E'
           list = if exp >= 0, do: list ++ '+', else: list
-          list ++ integer_to_charlist(adjusted)
+          list ++ Integer.to_charlist(adjusted)
       end
 
     list = if sign == -1, do: [?- | list], else: list
@@ -1946,12 +1932,6 @@ defmodule Decimal do
   end
 
   defp fix_float_exp([], result), do: :lists.reverse(result)
-
-  if Version.compare(System.version(), "1.3.0") == :lt do
-    defp integer_to_charlist(string), do: Integer.to_char_list(string)
-  else
-    defp integer_to_charlist(string), do: Integer.to_charlist(string)
-  end
 end
 
 defimpl Inspect, for: Decimal do
