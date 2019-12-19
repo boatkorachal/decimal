@@ -113,18 +113,14 @@ defmodule DecimalTest do
     end
   end
 
-  test "from_float/1" do
-    assert Decimal.from_float(123.0) == d(1, 1230, -1)
-    assert Decimal.from_float(0.1) == d(1, 1, -1)
-    assert Decimal.from_float(0.000015) == d(1, 15, -6)
-    assert Decimal.from_float(-1.5) == d(-1, 15, -1)
-  end
-
   test "cast/1" do
     assert Decimal.cast(123) == d(1, 123, 0)
-    assert Decimal.cast(123.0) == d(1, 1230, -1)
     assert Decimal.cast("123") == d(1, 123, 0)
     assert Decimal.cast("123.0") == d(1, 1230, -1)
+    assert Decimal.cast(123.0) == d(1, 1230, -1)
+    assert Decimal.cast(0.1) == d(1, 1, -1)
+    assert Decimal.cast(0.000015) == d(1, 15, -6)
+    assert Decimal.cast(-1.5) == d(-1, 15, -1)
     assert Decimal.new(123) |> Decimal.cast() == Decimal.new(123)
 
     assert_raise Error, fn ->
@@ -866,14 +862,14 @@ defmodule DecimalTest do
   end
 
   test "issue #62" do
-    assert Decimal.from_float(0.0001) == d(1, 1, -4)
-    assert Decimal.from_float(0.00001) == d(1, 1, -5)
-    assert Decimal.from_float(0.000001) == d(1, 1, -6)
-    assert Decimal.from_float(-0.0001) == d(-1, 1, -4)
-    assert Decimal.from_float(-0.00001) == d(-1, 1, -5)
-    assert Decimal.from_float(-0.000001) == d(-1, 1, -6)
-    assert Decimal.from_float(0.00002) == d(1, 2, -5)
-    assert Decimal.from_float(0.00009) == d(1, 9, -5)
+    assert Decimal.cast(0.0001) == d(1, 1, -4)
+    assert Decimal.cast(0.00001) == d(1, 1, -5)
+    assert Decimal.cast(0.000001) == d(1, 1, -6)
+    assert Decimal.cast(-0.0001) == d(-1, 1, -4)
+    assert Decimal.cast(-0.00001) == d(-1, 1, -5)
+    assert Decimal.cast(-0.000001) == d(-1, 1, -6)
+    assert Decimal.cast(0.00002) == d(1, 2, -5)
+    assert Decimal.cast(0.00009) == d(1, 9, -5)
   end
 
   test "issue #57" do

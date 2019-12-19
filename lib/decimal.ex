@@ -1312,8 +1312,22 @@ defmodule Decimal do
              is_integer(exp),
       do: %Decimal{sign: sign, coef: coef, exp: exp}
 
+  @deprecated "Use Decimal.cast/1 instead"
+  @spec from_float(float) :: t
+  def from_float(float) when is_float(float) do
+    float
+    |> :io_lib_format.fwrite_g()
+    |> fix_float_exp()
+    |> IO.iodata_to_binary()
+    |> new()
+  end
+
   @doc """
-  Creates a new decimal number from a floating point number.
+  Creates a new decimal number from an integer, string, float, or existing decimal number.
+
+  If the value cannot be cast, Decimal.Error is raised.
+
+  ## Floats
 
   Floating point numbers use a fixed number of binary digits to represent
   a decimal number which has inherent inaccuracy as some decimal numbers cannot
@@ -1330,31 +1344,6 @@ defmodule Decimal do
       #Decimal<0.3>
 
   For this reason, it's recommended to build decimals with `new/1`, which is always precise, instead.
-
-  ## Examples
-
-      iex> Decimal.from_float(3.14)
-      #Decimal<3.14>
-
-  """
-  doc_since("1.5.0")
-  @spec from_float(float) :: t
-  def from_float(float) when is_float(float) do
-    float
-    |> :io_lib_format.fwrite_g()
-    |> fix_float_exp()
-    |> IO.iodata_to_binary()
-    |> new()
-  end
-
-  @doc """
-  Creates a new decimal number from an integer, string, float, or existing decimal number.
-
-  Because conversion from a floating point number is not exact, it's recommended
-  to instead use `new/1` or `from_float/1` when the argument's type is certain.
-  See `from_float/1`.
-
-  If the value cannot be cast, Decimal.Error is raised.
 
   ## Examples
 
