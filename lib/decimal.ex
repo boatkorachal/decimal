@@ -14,9 +14,6 @@ defmodule Decimal do
   Some operation results are not defined and will return NaN.
   This kind of NaN is quiet, any operation returning a number will return
   NaN when given a quiet NaN (the NaN value will flow through all operations).
-  The other kind of NaN is signalling which is the value that can be reached
-  in `result` field on `Decimal.Error` when the result is NaN. Any operation
-  given a signalling NaN return will signal `:invalid_operation`.
 
   Exceptional conditions are grouped into signals, each signal has a flag and a
   trap enabler in the context. Whenever a signal is triggered it's flag is set
@@ -126,7 +123,6 @@ defmodule Decimal do
       * `signal` - the signalled error, additional signalled errors will be found
         in the context.
       * `reason` - the reason for the error.
-      * `result` - the result of the operation signalling the error.
 
     Rescuing the error to access the result or the other fields of the error is
     discouraged and should only be done for exceptional conditions. It is more
@@ -134,7 +130,7 @@ defmodule Decimal do
     after the operation if the result needs to be inspected.
     """
 
-    defexception [:signal, :reason, :result]
+    defexception [:signal, :reason]
 
     @impl true
     def message(%{signal: signal, reason: reason}) do
@@ -1911,7 +1907,7 @@ defmodule Decimal do
     result = if match?(%Decimal{coef: :NaN}, result), do: %{result | coef: nan}, else: result
 
     if error_signal do
-      error = [signal: error_signal, reason: reason, result: result]
+      error = [signal: error_signal, reason: reason]
       {:error, error}
     else
       {:ok, result}
