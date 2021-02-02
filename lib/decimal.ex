@@ -387,6 +387,26 @@ defmodule Decimal do
   def gt?(num1, num2), do: compare(num1, num2) == :gt
 
   @doc """
+  Compares two numbers numerically and returns `true` if the the first argument
+  is greater or equal than the second, otherwise `false`. If one the operands is a
+  quiet NaN this operation will always return `false`.
+
+  ## Examples
+
+      iex> Decimal.gte?("1.3", "1.2")
+      true
+
+      iex> Decimal.gte?("1.2", "1.2")
+      true
+
+      iex> Decimal.gte?("1.2", "1.3")
+      false
+
+  """
+  doc_since("1.8.0")
+  def gte?(num1, num2), do: gt?(num1, num2) or eq?(num1, num2)
+
+  @doc """
   Compares two numbers numerically and returns `true` if the the first number is
   less than the second number, otherwise `false`. If one of the operands is a
   quiet NaN this operation will always return `false`.
@@ -405,6 +425,27 @@ defmodule Decimal do
   def lt?(%Decimal{coef: :NaN}, _num2), do: false
   def lt?(_num1, %Decimal{coef: :NaN}), do: false
   def lt?(num1, num2), do: compare(num1, num2) == :lt
+
+  @doc """
+  Compares two numbers numerically and returns `true` if the the first number is
+  less than or equal the second number, otherwise `false`. If one of the operands is a
+  quiet NaN this operation will always return `false`.
+
+  ## Examples
+
+      iex> Decimal.lte?("1.1", "1.2")
+      true
+
+      iex> Decimal.lte?("1.2", "1.2")
+      true
+
+      iex> Decimal.lte?("1.4", "1.2")
+      false
+
+  """
+  doc_since("1.8.0")
+  @spec lte?(decimal, decimal) :: boolean
+  def lte?(num1, num2), do: lt?(num1, num2) or eq?(num1, num2)
 
   @doc """
   Divides two numbers.

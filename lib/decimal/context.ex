@@ -73,7 +73,9 @@ defmodule Decimal.Context do
           traps: [Decimal.signal()]
         }
 
-  defstruct precision: 28,
+  @default_precision Application.compile_env(:decimal, :precision, 28)
+
+  defstruct precision: @default_precision,
             rounding: :half_up,
             flags: [],
             traps: [:invalid_operation, :division_by_zero]
